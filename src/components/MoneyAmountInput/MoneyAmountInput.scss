@@ -1,0 +1,15 @@
+.MoneyAmountInput {
+  font-weight: 700;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  margin-top: 20px;
+  outline: none;
+  padding: 20px;
+  width: 100%;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    height: 50px;
+  }
+}

@@ -1,0 +1,25 @@
+ul,
+h1,
+h2,
+h3 {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  background-color: #f9f2ed;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  column-gap: 100px;
+  width: 1000px;
+  margin: 100px auto;
+  padding: 30px;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
