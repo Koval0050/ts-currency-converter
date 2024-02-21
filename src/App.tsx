@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useCallback } from "react";
-import "./App.scss";
+import { useEffect, useState, useCallback, FC } from "react";
 
 import { getCurrencies } from "api";
 import { CURRENCIES } from "constants/currencies";
-import { ApiResponse } from "./types";
+import { ICurrency, VoidFunction, TInputAmount, TCurrency } from "types/types";
 
 import { Container } from "components/Container";
 import { CurrenciesList } from "components/Currencies/CurrenciesList";
 import { MoneyAmountInput } from "components/MoneyAmountInput";
 
-function App() {
-  const [currencies, setCurrencies] = useState<ApiResponse[]>([]);
+const App: FC = () => {
+  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const [fromCurrency, setFromCurrency] = useState<string>(CURRENCIES.UAH);
   const [toCurrency, setToCurrency] = useState<string>(CURRENCIES.USD);
   const [convertedAmountFrom, setConvertedAmountFrom] = useState<number>(1);
@@ -21,32 +20,29 @@ function App() {
     const fetchData = async () => {
       try {
         const fetchedData = await getCurrencies();
-        const filteredData = fetchedData.filter((currency: ApiResponse) =>
+        const filteredData = fetchedData.filter((currency: ICurrency) =>
           CURRENCIES.hasOwnProperty(currency.cc)
         );
         setCurrencies(filteredData);
+
+        const usdCurrency = filteredData.find(
+          (currency: ICurrency) => currency.cc === CURRENCIES.USD
+        );
+        if (usdCurrency) {
+          setConvertedAmountFrom(usdCurrency.rate);
+        }
       } catch (error) {
         console.error("Помилка під час отримання даних:", error);
       }
     };
     fetchData();
-  }, []);
-
-  //встановлюємо значення курсу долара за замовчуванням
-  useEffect(() => {
-    const usdCurrency = currencies.find(
-      (currency) => currency.cc === CURRENCIES.USD
-    );
-    if (usdCurrency) {
-      setConvertedAmountFrom(usdCurrency.rate);
-    }
   }, [currencies]);
 
   //отримуємо курс валюти яку обрали
   const getExchangeRate = useCallback(
     (currencyCode: string) => {
       const currency = currencies.find((item) => item.cc === currencyCode);
-      return currency ? currency.rate : 1;
+      return currency?.rate || 1;
     },
     [currencies]
   );
@@ -78,8 +74,8 @@ function App() {
   );
 
   //Функції зміни валюти
-  const handleFromCurrencyChange = useCallback(
-    (currency: string): void => {
+  const handleFromCurrencyChange: VoidFunction<TCurrency> = useCallback(
+    (currency: TCurrency) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         currency,
@@ -92,8 +88,8 @@ function App() {
     [calculateConvertedAmount, convertedAmountFrom, toCurrency]
   );
 
-  const handleToCurrencyChange = useCallback(
-    (currency: string): void => {
+  const handleToCurrencyChange: VoidFunction<TCurrency> = useCallback(
+    (currency: TCurrency) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         fromCurrency,
@@ -107,8 +103,8 @@ function App() {
   );
 
   //функції зміни суми у полях вводу
-  const handleAmountInputChangeFrom = useCallback(
-    (newValue: number): void => {
+  const onChangeFromAmount: VoidFunction<TInputAmount> = useCallback(
+    (newValue: TInputAmount) => {
       const amount = calculateConvertedAmount(
         newValue,
         fromCurrency,
@@ -120,9 +116,8 @@ function App() {
     },
     [calculateConvertedAmount, fromCurrency, toCurrency]
   );
-
-  const handleAmountInputChangeTo = useCallback(
-    (newValue: number): void => {
+  const onChangeToAmount: VoidFunction<TInputAmount> = useCallback(
+    (newValue: TInputAmount) => {
       const amount = calculateConvertedAmount(
         newValue,
         toCurrency,
@@ -144,7 +139,7 @@ function App() {
         />
         <MoneyAmountInput
           value={convertedAmountFrom}
-          onInput={handleAmountInputChangeFrom}
+          onInput={onChangeFromAmount}
         />
       </Container>
       <Container>
@@ -154,11 +149,11 @@ function App() {
         />
         <MoneyAmountInput
           value={convertedAmountTo}
-          onInput={handleAmountInputChangeTo}
+          onInput={onChangeToAmount}
         />
-      </Container>{" "}
+      </Container>
     </div>
   );
-}
+};
 
 export default App;

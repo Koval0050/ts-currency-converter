@@ -1,19 +1,26 @@
-type Props = {
-  currency: string;
-  onClick: (currency: string) => void;
-  isActive: boolean;
-};
+import { FC } from "react";
+import { IProps } from "types/types";
+import classNames from "classnames";
 
-export const CurrenciesListItem = ({ currency, onClick, isActive }: Props) => {
-  const handleClick = () => {
-    onClick(currency);
-  };
+interface IListItemProp<T> extends Omit<IProps<T>, "activeCurrency"> {
+  // Виключаємо поле activeCurrency з IProps
+  currency: T;
+  isActive: boolean;
+}
+
+export const CurrenciesListItem: FC<IListItemProp<string>> = ({
+  currency,
+  onClick,
+  isActive,
+}) => {
+  const listItemClasses = classNames("CurrenciesListItem", {
+    active: isActive,
+  });
+
+  const handleClick = () => onClick(currency);
 
   return (
-    <li
-      className={`CurrenciesListItem ${isActive ? "active" : ""}`}
-      onClick={handleClick}
-    >
+    <li className={listItemClasses} onClick={handleClick}>
       {currency}
     </li>
   );
