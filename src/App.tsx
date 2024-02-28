@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, FC } from "react";
 
 import { getCurrencies } from "api";
 import { CURRENCIES } from "constants/currencies";
-import { ICurrency, VoidFunction, TInputAmount, TCurrency } from "types/types";
+import { ICurrency, OnChangeAmount, OnChangeCurrency } from "types";
 
 import { Container } from "components/Container";
 import { CurrenciesList } from "components/Currencies/CurrenciesList";
@@ -19,14 +19,15 @@ const App: FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedData = await getCurrencies();
-        const filteredData = fetchedData.filter((currency: ICurrency) =>
+        const fetchedData: ICurrency[] = await getCurrencies();
+        const filteredData = fetchedData.filter((currency) =>
           CURRENCIES.hasOwnProperty(currency.cc)
         );
+
         setCurrencies(filteredData);
 
         const usdCurrency = filteredData.find(
-          (currency: ICurrency) => currency.cc === CURRENCIES.USD
+          (currency) => currency.cc === CURRENCIES.USD
         );
         if (usdCurrency) {
           setConvertedAmountFrom(usdCurrency.rate);
@@ -74,8 +75,8 @@ const App: FC = () => {
   );
 
   //Функції зміни валюти
-  const handleFromCurrencyChange: VoidFunction<TCurrency> = useCallback(
-    (currency: TCurrency) => {
+  const handleFromCurrencyChange: OnChangeCurrency = useCallback(
+    (currency: string) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         currency,
@@ -88,8 +89,8 @@ const App: FC = () => {
     [calculateConvertedAmount, convertedAmountFrom, toCurrency]
   );
 
-  const handleToCurrencyChange: VoidFunction<TCurrency> = useCallback(
-    (currency: TCurrency) => {
+  const handleToCurrencyChange: OnChangeCurrency = useCallback(
+    (currency: string) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         fromCurrency,
@@ -103,8 +104,8 @@ const App: FC = () => {
   );
 
   //функції зміни суми у полях вводу
-  const onChangeFromAmount: VoidFunction<TInputAmount> = useCallback(
-    (newValue: TInputAmount) => {
+  const onChangeFromAmount: OnChangeAmount = useCallback(
+    (newValue: number) => {
       const amount = calculateConvertedAmount(
         newValue,
         fromCurrency,
@@ -116,8 +117,8 @@ const App: FC = () => {
     },
     [calculateConvertedAmount, fromCurrency, toCurrency]
   );
-  const onChangeToAmount: VoidFunction<TInputAmount> = useCallback(
-    (newValue: TInputAmount) => {
+  const onChangeToAmount: OnChangeAmount = useCallback(
+    (newValue: number) => {
       const amount = calculateConvertedAmount(
         newValue,
         toCurrency,

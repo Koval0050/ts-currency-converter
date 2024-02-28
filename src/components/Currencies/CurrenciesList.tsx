@@ -2,9 +2,9 @@ import { FC } from "react";
 import { CURRENCIES } from "constants/currencies";
 import { CurrenciesListItem } from "./CurrenciesListItem";
 import { CurrenciesListStyle } from "./CurrenciesListStyle";
-import { IProps } from "types/types";
+import { ActiveCurrencyProps } from "types";
 
-export const CurrenciesList: FC<IProps<string>> = ({
+export const CurrenciesList: FC<ActiveCurrencyProps<string>> = ({
   onClick,
   activeCurrency,
 }) => (

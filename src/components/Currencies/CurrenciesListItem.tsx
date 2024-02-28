@@ -1,26 +1,27 @@
 import { FC } from "react";
-import { IProps } from "types/types";
-import classNames from "classnames";
+import { ActiveCurrencyProps } from "types";
+import cn from "classnames";
 
-interface IListItemProp<T> extends Omit<IProps<T>, "activeCurrency"> {
-  // Виключаємо поле activeCurrency з IProps
+interface ICurrenciesListItem<T>
+  extends Omit<ActiveCurrencyProps<T>, "activeCurrency"> {
   currency: T;
   isActive: boolean;
 }
 
-export const CurrenciesListItem: FC<IListItemProp<string>> = ({
+export const CurrenciesListItem: FC<ICurrenciesListItem<string>> = ({
   currency,
   onClick,
   isActive,
 }) => {
-  const listItemClasses = classNames("CurrenciesListItem", {
-    active: isActive,
-  });
-
   const handleClick = () => onClick(currency);
 
   return (
-    <li className={listItemClasses} onClick={handleClick}>
+    <li
+      className={cn("CurrenciesListItem", {
+        active: isActive,
+      })}
+      onClick={handleClick}
+    >
       {currency}
     </li>
   );

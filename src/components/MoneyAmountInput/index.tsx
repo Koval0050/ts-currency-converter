@@ -1,9 +1,10 @@
 import "./MoneyAmountInput.scss";
 import { ChangeEvent } from "react";
+import { OnChangeAmount } from "types";
 
 type Props = {
   value: number;
-  onInput: (newValue: number) => void;
+  onInput: OnChangeAmount;
 };
 
 export const MoneyAmountInput = ({ value, onInput }: Props) => {
