@@ -31,13 +31,14 @@ const App: FC = () => {
         );
         if (usdCurrency) {
           setConvertedAmountFrom(usdCurrency.rate);
+          console.log("set usd");
         }
       } catch (error) {
         console.error("Помилка під час отримання даних:", error);
       }
     };
     fetchData();
-  }, [currencies]);
+  }, []);
 
   //отримуємо курс валюти яку обрали
   const getExchangeRate = useCallback(
