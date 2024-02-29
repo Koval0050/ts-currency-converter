@@ -1,8 +1,10 @@
 import { FC } from "react";
+
 import { CURRENCIES } from "constants/currencies";
+import { ActiveCurrencyProps } from "types";
+
 import { CurrenciesListItem } from "./CurrenciesListItem";
 import { CurrenciesListStyle } from "./CurrenciesListStyle";
-import { ActiveCurrencyProps } from "types";
 
 export const CurrenciesList: FC<ActiveCurrencyProps<string>> = ({
   onClick,

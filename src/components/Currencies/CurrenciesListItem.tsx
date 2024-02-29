@@ -1,6 +1,7 @@
 import { FC } from "react";
-import { ActiveCurrencyProps } from "types";
 import cn from "classnames";
+
+import { ActiveCurrencyProps } from "types";
 
 interface ICurrenciesListItem<T>
   extends Omit<ActiveCurrencyProps<T>, "activeCurrency"> {

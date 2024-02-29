@@ -10,16 +10,16 @@ import { MoneyAmountInput } from "components/MoneyAmountInput";
 
 const App: FC = () => {
   const [currencies, setCurrencies] = useState<ICurrency[]>([]);
-  const [fromCurrency, setFromCurrency] = useState<string>(CURRENCIES.UAH);
-  const [toCurrency, setToCurrency] = useState<string>(CURRENCIES.USD);
-  const [convertedAmountFrom, setConvertedAmountFrom] = useState<number>(1);
-  const [convertedAmountTo, setConvertedAmountTo] = useState<number>(1);
+  const [fromCurrency, setFromCurrency] = useState(CURRENCIES.UAH);
+  const [toCurrency, setToCurrency] = useState(CURRENCIES.USD);
+  const [convertedAmountFrom, setConvertedAmountFrom] = useState(1);
+  const [convertedAmountTo, setConvertedAmountTo] = useState(1);
 
   //отримуємо курси валют
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedData: ICurrency[] = await getCurrencies();
+        const fetchedData = await getCurrencies();
         const filteredData = fetchedData.filter((currency) =>
           CURRENCIES.hasOwnProperty(currency.cc)
         );
