@@ -1,13 +1,15 @@
+import { FC } from "react";
+
 import { CURRENCIES } from "constants/currencies";
+import { ActiveCurrencyProps } from "types";
+
 import { CurrenciesListItem } from "./CurrenciesListItem";
 import { CurrenciesListStyle } from "./CurrenciesListStyle";
 
-type Props = {
-  onClick: (currency: string) => void;
-  activeCurrency: string;
-};
-
-export const CurrenciesList = ({ onClick, activeCurrency }: Props) => (
+export const CurrenciesList: FC<ActiveCurrencyProps<string>> = ({
+  onClick,
+  activeCurrency,
+}) => (
   <CurrenciesListStyle>
     {Object.values(CURRENCIES).map((currency) => (
       <CurrenciesListItem

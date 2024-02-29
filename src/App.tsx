@@ -1,30 +1,38 @@
-import React, { useEffect, useState, useCallback } from "react";
-import "./App.scss";
+import { useEffect, useState, useCallback, FC } from "react";
 
 import { getCurrencies } from "api";
 import { CURRENCIES } from "constants/currencies";
-import { ApiResponse } from "./types";
+import { ICurrency, OnChangeAmount, OnChangeCurrency } from "types";
 
 import { Container } from "components/Container";
 import { CurrenciesList } from "components/Currencies/CurrenciesList";
 import { MoneyAmountInput } from "components/MoneyAmountInput";
 
-function App() {
-  const [currencies, setCurrencies] = useState<ApiResponse[]>([]);
-  const [fromCurrency, setFromCurrency] = useState<string>(CURRENCIES.UAH);
-  const [toCurrency, setToCurrency] = useState<string>(CURRENCIES.USD);
-  const [convertedAmountFrom, setConvertedAmountFrom] = useState<number>(1);
-  const [convertedAmountTo, setConvertedAmountTo] = useState<number>(1);
+const App: FC = () => {
+  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
+  const [fromCurrency, setFromCurrency] = useState(CURRENCIES.UAH);
+  const [toCurrency, setToCurrency] = useState(CURRENCIES.USD);
+  const [convertedAmountFrom, setConvertedAmountFrom] = useState(1);
+  const [convertedAmountTo, setConvertedAmountTo] = useState(1);
 
   //отримуємо курси валют
   useEffect(() => {
     const fetchData = async () => {
       try {
         const fetchedData = await getCurrencies();
-        const filteredData = fetchedData.filter((currency: ApiResponse) =>
+        const filteredData = fetchedData.filter((currency) =>
           CURRENCIES.hasOwnProperty(currency.cc)
         );
+
         setCurrencies(filteredData);
+
+        const usdCurrency = filteredData.find(
+          (currency) => currency.cc === CURRENCIES.USD
+        );
+        if (usdCurrency) {
+          setConvertedAmountFrom(usdCurrency.rate);
+          console.log("set usd");
+        }
       } catch (error) {
         console.error("Помилка під час отримання даних:", error);
       }
@@ -32,21 +40,11 @@ function App() {
     fetchData();
   }, []);
 
-  //встановлюємо значення курсу долара за замовчуванням
-  useEffect(() => {
-    const usdCurrency = currencies.find(
-      (currency) => currency.cc === CURRENCIES.USD
-    );
-    if (usdCurrency) {
-      setConvertedAmountFrom(usdCurrency.rate);
-    }
-  }, [currencies]);
-
   //отримуємо курс валюти яку обрали
   const getExchangeRate = useCallback(
     (currencyCode: string) => {
       const currency = currencies.find((item) => item.cc === currencyCode);
-      return currency ? currency.rate : 1;
+      return currency?.rate || 1;
     },
     [currencies]
   );
@@ -78,8 +76,8 @@ function App() {
   );
 
   //Функції зміни валюти
-  const handleFromCurrencyChange = useCallback(
-    (currency: string): void => {
+  const handleFromCurrencyChange: OnChangeCurrency = useCallback(
+    (currency: string) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         currency,
@@ -92,8 +90,8 @@ function App() {
     [calculateConvertedAmount, convertedAmountFrom, toCurrency]
   );
 
-  const handleToCurrencyChange = useCallback(
-    (currency: string): void => {
+  const handleToCurrencyChange: OnChangeCurrency = useCallback(
+    (currency: string) => {
       const amount = calculateConvertedAmount(
         convertedAmountFrom,
         fromCurrency,
@@ -107,8 +105,8 @@ function App() {
   );
 
   //функції зміни суми у полях вводу
-  const handleAmountInputChangeFrom = useCallback(
-    (newValue: number): void => {
+  const onChangeFromAmount: OnChangeAmount = useCallback(
+    (newValue: number) => {
       const amount = calculateConvertedAmount(
         newValue,
         fromCurrency,
@@ -120,9 +118,8 @@ function App() {
     },
     [calculateConvertedAmount, fromCurrency, toCurrency]
   );
-
-  const handleAmountInputChangeTo = useCallback(
-    (newValue: number): void => {
+  const onChangeToAmount: OnChangeAmount = useCallback(
+    (newValue: number) => {
       const amount = calculateConvertedAmount(
         newValue,
         toCurrency,
@@ -144,7 +141,7 @@ function App() {
         />
         <MoneyAmountInput
           value={convertedAmountFrom}
-          onInput={handleAmountInputChangeFrom}
+          onInput={onChangeFromAmount}
         />
       </Container>
       <Container>
@@ -154,11 +151,11 @@ function App() {
         />
         <MoneyAmountInput
           value={convertedAmountTo}
-          onInput={handleAmountInputChangeTo}
+          onInput={onChangeToAmount}
         />
-      </Container>{" "}
+      </Container>
     </div>
   );
-}
+};
 
 export default App;
